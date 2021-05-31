@@ -1,0 +1,18 @@
+name: publish
+on: [push]
+jobs:
+  all:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - run: docker run --rm -v "${pwd}:C:\work" ghcr.io/joseph-jclab/skp2stl:r02-ltsc2019 pwsh -File C:\work\.github\workflows\converts.ps1
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: |
+            output/*.stl
+
